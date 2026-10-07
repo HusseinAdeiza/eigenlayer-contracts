@@ -473,8 +473,9 @@ contract DelegationManager is
             // Calculate how many shares can be withdrawn after factoring in slashing
             withdrawableShares[i] = dsf.calcWithdrawable(depositSharesToWithdraw[i], slashingFactors[i]);
 
-            // Scale shares for queue withdrawal
-            scaledShares[i] = dsf.scaleForQueueWithdrawal(depositSharesToWithdraw[i]);
+            // Scale shares for queue withdrawal — record magnitude-round-tripped value so
+            // that only ONE rounding effect occurs (not two stacking at queue + slash time)
+            scaledShares[i] = withdrawableShares[i];
 
             // Remove delegated shares from the operator
             if (operator != address(0)) {
